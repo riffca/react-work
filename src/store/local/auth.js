@@ -46,7 +46,7 @@ const initialState = {
 let  authReducer  = (state = initialState, action) => {
   switch (action.type) {
     case AUTH_PROCESS:
-      return Object.assign(state,{user:action.payload})
+      return { ...state, user:action.payload }
     default:
       return state
   }

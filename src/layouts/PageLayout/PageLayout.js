@@ -1,26 +1,53 @@
-import React from 'react'
 import { IndexLink, Link } from 'react-router'
 import PropTypes from 'prop-types'
 import './PageLayout.scss'
+import React from 'react';
+import { connect } from 'react-redux';
 
-export const PageLayout = ({ children }) => (
-  <div className='container text-center'>
-    <h1>React Redux Starter Kit</h1>
-    <IndexLink to='/' activeClassName='page-layout__nav-item--active'>Home</IndexLink>
-    {' · '}
-    <Link to='/counter' activeClassName='page-layout__nav-item--active'>Counter</Link>
-
-    {' · '}
-
-    <Link to='/profile' activeClassName='page-layout__nav-item--active'>Profile</Link>
-
-    <div className='page-layout__viewport'>
-      {children}
-    </div>
-  </div>
-)
-PageLayout.propTypes = {
-  children: PropTypes.node,
+function mapStateToProps(state) {
+  return {
+    authUser: state.auth.user
+  };
 }
 
-export default PageLayout
+export class PageLayout extends React.Component {
+
+  constructor(props) {
+    super(props);
+  }
+
+  render() {
+
+    let { authUser={} } = this.props;
+
+    return (
+      <div className='container text-center'>
+
+        <h2>Музыкальная школа</h2>
+
+        <div className="app_user_info">
+          <span className="app_link_button_spaces">{authUser.username}</span>
+          <span className="app_link_button_spaces">{authUser.balance}</span>
+        </div>
+
+        <nav className="nav">
+          <IndexLink to='/counter' className="nav-link active">Рассписание</IndexLink>
+          <Link to='/' className="nav-link">Преподаватели</Link>
+          <Link to='/profile' className="nav-link">Profile</Link>
+        </nav>
+
+        <div className='page-layout__viewport'>
+          {this.props.children}
+        </div>
+
+      </div>
+
+    );
+  }
+}
+
+export default connect(
+  mapStateToProps,
+// Implement map dispatch to props
+)(PageLayout)
+
