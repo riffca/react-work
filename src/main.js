@@ -1,11 +1,13 @@
 import React from 'react'
 import ReactDOM from 'react-dom'
-import createStore from './store/createStore'
+
 import './styles/main.scss'
 
-// Store Initialization
-// ------------------------------------
-const store = createStore(window.__INITIAL_STATE__)
+import store from "./store"
+
+import chan from "chan"
+//chan.req("app-init")
+chan.req("app-init", {"stas": "stas"})
 
 // Render Setup
 // ------------------------------------

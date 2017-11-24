@@ -2,6 +2,9 @@ import React from 'react'
 import { browserHistory, Router } from 'react-router'
 import { Provider } from 'react-redux'
 import PropTypes from 'prop-types'
+//import store from 'store'
+import { receiveAccount } from "store/local/auth"
+import { loadProductList } from "store/local/product"
 
 class App extends React.Component {
   static propTypes = {
@@ -11,6 +14,12 @@ class App extends React.Component {
 
   shouldComponentUpdate () {
     return false
+  }
+
+  componentDidMount(){
+    this.props.store.dispatch(receiveAccount())
+    this.props.store.dispatch(loadProductList())
+
   }
 
   render () {

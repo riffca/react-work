@@ -1,3 +1,5 @@
+import chan from "chan"
+
 // ------------------------------------
 // Constants
 // ------------------------------------
@@ -25,13 +27,15 @@ export const openProfile = () => {
       name: "Unregistered",
     }
     return new Promise((resolve) => {
-      setTimeout(() => {
-        dispatch({
-          type    : PROFILE_SETUP_USER,
-          payload : userInfo
+      chan
+        .req("profile-open",{username: "stas"})
+        .then(data=>{
+          dispatch({
+            type: PROFILE_SETUP_USER,
+            payload: data
+          })
+          resolve()
         })
-        resolve()
-      }, 200)
     })
   }
 }
@@ -61,11 +65,10 @@ export const actions = {
 
 const ACTION_HANDLERS = {
   [PROFILE_SETUP_USER]    : (state, action) => { 
-    console.log(state)
-    return Object.assign({}, state , action.payload)
+    return Object.assign({}, state , { user: action.payload })
   },
-
   [PROFILE_WIKI]    : (state, action) => { 
+
     return Object.assign({}, state , { wiki: action.payload })
   },
 
@@ -74,11 +77,19 @@ const ACTION_HANDLERS = {
 // ------------------------------------
 // Reducer
 // ------------------------------------
-const initialState = {mama: true}
+const initialState = {
+
+  authUser: {
+    name: "Unregistered",
+    email: "Unregistered@un.com",
+    token: "UniqueToken"
+  },
+  users: []
+
+}
 
 
 export default function profileReducer (state = initialState, action) {
   const handler = ACTION_HANDLERS[action.type]
-
   return handler ? handler(state, action) : state
 }
