@@ -2,7 +2,7 @@ import SockJS from "sockjs-client/dist/sockjs.min"
 // import store from "root/store"
 
 let token = localStorage.getItem("token") || "default" 
-let host = "http://localhost:8091"
+let host = "http://localhost:8092"
 
 class Chan {
 

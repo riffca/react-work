@@ -1,83 +1,51 @@
+let typesObject = {
+	"text":[
+		"advt",
+		"name"
+	],
+	"items":[
+		"products"
+	]
+}
+
+const types = ()=>{
+	let types = {}
+	for ( let key in typesObject ) {
+		typesObject[key].forEach(i=>{
+			types[i]=key
+		})
+	}
+	return types
+}
+
+const actions = {
+	shop: {
+		change: {
+			name: "",
+			advt: "",
+			products: []
+		}
+	},
+
+	auth: {
+		login: {
+			username: "",
+			password: "",
+		},
+		signup: {
+			username: "",
+			email: "",
+			password: ""
+		}
+	}
+}
+
 export default {
 
+	types: types(),
+	actions
 
-	"account-receive": {
-
-		req: {
-			username: "riffca",
-			balance: 10,
-			//or
-			id: 1
-		},
-		
-		res: {
-			username: "riffca",
-			products: [],
-			basket: {items: []}
-		}
-
-	},
-
-	"account-edit": {
-		req: {
-			id: 1,
-			//or
-			username: "riffca",
-			balance: 99999,
-			products: [
-				{
-					id: 1
-					articule: "1qrrgd", 
-					model:"one", 
-					name: "some tickets",
-					description: "some text",
-					title: "move your share",
-				}
-			]
-
-		}
-
-	},
-
-	"product-edit": {
-		req: {
-			id: 1,
-			//or
-			title: "one",
-			description: "one is the best",
-			image: ""
-		},
-
-	},
-
-	"product-edit": {
-
-
-	}
-
-	"product-fetch": {
-		req: {
-			id: 1
-			//or
-			auth: true,
-			//or
-			all: false,
-			//or
-			user: nul
-		},
-	},
-
-	"shop-get": {
-		req: {
-
-		}
-	},
-
-	"shop-manage": {
-		req: {
-			id: null
-			//or
-		}
-	}
 
 }
+
+
