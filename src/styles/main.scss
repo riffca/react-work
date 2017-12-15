@@ -20,13 +20,19 @@ body {
   box-sizing: inherit;
 }
 
+.app_chats {
+  
+
+
+
+}
+
 
 .app_link_button_spaces {
   display: inline-block;
   margin: .1rem .2rem;
   padding: 1rem .8rem;
 }
-
 
 .app_form_universal {
 
@@ -88,7 +94,7 @@ body {
   }
 
   .form_item_choice {
-  	cursor: poitner;
+  	cursor: pointer;
 	display: inline-block;
 	margin: .5rem;
   }

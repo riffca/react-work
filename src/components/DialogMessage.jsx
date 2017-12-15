@@ -3,13 +3,13 @@ import { connect } from 'react-redux';
 
 function mapStateToProps(state) {
   return {
-  	products: state.product.list
+
   };
 }
 
-export class ProductList extends React.Component {
+export class DialogMessage extends React.Component {
   static propTypes = {
-    name: React.PropTypes.string,
+    message: React.PropTypes.object,
   };
 
   constructor(props) {
@@ -18,14 +18,14 @@ export class ProductList extends React.Component {
 
   render() {
     return (
-      <div></div>
+      <div className="app_message">
+      	<span className="_message_text"></span>
+      </div>
     );
   }
 }
 
 export default connect(
   mapStateToProps,
-  []
 // Implement map dispatch to props
-)(ProductList)
-
+)(DialogMessage)

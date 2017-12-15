@@ -14,60 +14,93 @@ function mapStateToProps(state) {
 class ChooseItems extends React.Component {
 
 	static propTypes = {
-	    currentItems: PropTypes.array,
+	    alreadyItems: PropTypes.array,
 	};
 
-	static defaultPropTypes = {
-	    currentItems: []
+	static defaultProps = {
+	   	alreadyItems: []
 	}
 
 	constructor(){
 		super()
 		this.state = {
-			choiceItems: []
+			choiceItems: [],
+			currentItems: []
 		}
-	}
-
-	render(){
-		let { choiceItems } = this.state
-		let current = this.props.currentItems.map(i=><div className="form_item_choice"></div>)
-		let choice = choiceItems.map((i, index)=>
-			<div onClick={this.select.bind(this, index)} className="form_item_choice">
-			    <h3>{i.id}</h3>
-			    <p>{i.title}</p>	
-			</div>
-		)
-		return  (<div>
-					<div>
-					{current}
-					{choice}
-				   </div> 
-			   </div>)
 	}
 
 	componentWillMount(){
 		let { choiceRequest: { action, payload } } = this.props
-		chan.req(action, payload).then(items=>{
-			this.setState({choiceItems:items})
-		})
-	}
-
-	componentWillReceiveProps(newProps) {
-		if(this.props.requestKey != newProps.requestKey) {
-	    	this.setState({currentItems: newProps.currentItems});
-		}
-	}
-
-	select(index){
-		let current = this.state.choiceItems.splice(1,index)
-		let currentItems = this.state.currentItems
-		currentItems.push(current)
-
 		this.setState({
-			currentItems,
-			choiceItems: this.state.choiceItems
+			currentItems: this.props.alreadyItems
 		})
-		//store.setPayload(requestKey,choiceItems)
+		chan.req(action, payload).then(items=>{
+			this.setState({choiceItems:items.filter(i=> !this.props.alreadyItems.find(item=>i.id==item.id))})
+		})
+	}
+
+	componentDidUpdate(v,s){
+		//console.log(v)
+		//console.log(s)
+	}
+
+	select(index, e){
+		e.preventDefault()
+		let currentItemsLast =  this.state.currentItems.slice()
+		let choiceItems = this.state.choiceItems.slice()
+		let current = choiceItems.splice(index,1)
+		let currentItems = [ ...this.state.currentItems, ...current]
+		this.setState({
+			choiceItems,
+			currentItems
+		})
+		this.props.setFunc(currentItems)
+
+	}
+
+	removeSelect(index, e){
+		e.preventDefault()
+		let currentItems =  this.state.currentItems.slice()
+		let choiceItems = this.state.choiceItems.slice()
+		let current = currentItems.splice(index,1)
+		this.setState({
+			choiceItems: [ ...this.state.choiceItems, ...current],
+			currentItems,
+		})
+		this.props.setFunc(currentItems)
+	}
+
+	render(){
+
+		let current = this.state.currentItems
+			.map((i, index)=>{
+			return (
+				<div key={i.index} onClick={this.removeSelect.bind(this, index, event)} className="form_item_choice">		    
+					<h3>{i.id}</h3>
+				    <p>{i.title}</p>
+				</div>
+			)
+
+		})
+
+		let choice = this.state.choiceItems
+			.map((i, index)=>{ 
+			return (
+				<div key={i.index} onClick={this.select.bind(this, index, event)} className="form_item_choice">
+				    <h3>{i.id}</h3>
+				    <p>{i.title}</p>	
+				</div>
+			)
+		})
+
+
+		return  (<div>
+					<div>
+						{current}
+						<div style={{ height: 10, background: "black"}} />
+						{choice}
+				   </div> 
+			   </div>)
 	}
 
 }
@@ -111,6 +144,13 @@ export class FormUniversal extends React.Component {
 
   }
 
+  setItemsPayloadChunk(key, items){
+  	this.state.requestObject[key]=items
+  	this.setState({
+  		requestObject: this.state.requestObject
+  	})
+  }
+
   _renderPayload(){
 
   	let { payload } = this.props
@@ -118,18 +158,32 @@ export class FormUniversal extends React.Component {
   		let isItems = definition.types[key]=="items"
         return (
             <div key={index}>
+
             	<div>
+
             		<label>{key}</label>
+
             		{ isItems ? 
             			<div onClick={()=>{this.setState({openItems:!this.state.openItems})}}>
-            				<input type={definition.types[key]} disabled placeholder="choose items" className="_disabled" ref={key} onChange={ this._onChange.bind(this, key) } value={ this.state.requestObject[key] }/>
+            				<input type={definition.types[key]} disabled placeholder="choose items" className="_disabled" ref={key} onChange={ this._onChange.bind(this, key) } />
             			</div>
             			:
             			<input type={definition.types[key]} ref={key} onChange={ this._onChange.bind(this, key) } value={ this.state.requestObject[key] }/>
             		}
-            		{ this.state.requestObject[key].map && this.state.openItems ? <ChooseItems currentItems={this.state.requestObject[key]} choiceRequest={{action: "product-get",payload:{auth:true}}}/> : null }
+
+            		{ Array.isArray(this.state.requestObject[key]) && this.state.openItems ? 
+            			<ChooseItems 
+            				choiceRequest={{action: "product-get",payload:{auth:true}}}
+            				alreadyItems={this.state.requestObject[key]}
+            				setFunc={this.setItemsPayloadChunk.bind(this,key)}
+            				/> 
+            			: null 
+            		}
+
             	</div>
+
             </div>
+            
         )
     }) 
 

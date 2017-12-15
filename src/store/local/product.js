@@ -1,49 +1,26 @@
-let defaultItems = [
-  {
-    title: "веник",
-    price: 20
-  },
-  {
-    title: "ручка",
-    price: 30
-  }
-]
-// ------------------------------------
-// Constants
-// ------------------------------------
 export const PRODUCT_SET_LIST = 'PRODUCT_SET_LIST'
-export const PRODUCT_LIST_ADD_ITEM = 'PRODUCT_LIST_ADD_ITEM'
+
 
 // ------------------------------------
 // Actions
 // ------------------------------------
-export const setList =  ({list_id="default", items=defaultItems }) => {
-  return {
-    type    : PRODUCT_SET_LIST,
-    payload : { list_id, items }
-  }
-}
+export const loadProductList =  ( options ) => {
 
-export const loadProductList = (username = "riffca") => {
-	//console.log(account)
-  return (dispatch, getState) => {
-    return new Promise((resolve) => {
-      dispatch(setList({}))
-      resolve()
+  return (dispatch) => {
+
+    chan.req("product-get", options ).then(products=>{
+
+      dispatch({
+        type    : PRODUCT_SET_LIST,
+        payload : { lisname: options.lisname, prosducts }
+      })
+      
     })
+
+    
   }
 }
 
-
-export const addProductListItem = (username = "riffca") => {
-  //console.log(account)
-  return (dispatch, getState) => {
-    return new Promise((resolve) => {
-      dispatch(setList({}))
-      resolve()
-    })
-  }
-}
 
 export const actions = {
 	loadProductList
@@ -53,7 +30,7 @@ export const actions = {
 // Reducer
 // ------------------------------------
 const initialState = {
-	list_id: null,
+	active: null,
   lists: []
 }
 
@@ -61,14 +38,13 @@ const initialState = {
 let  productReducer  = (state = initialState, action) => {
   switch (action.type) {
     case PRODUCT_SET_LIST:
-      let { list_id, items } = action.payload
+      let { listname, products } = action.payload
       let lists = state.lists.slice()
-      lists.push({ id: list_id, items })
+      lists.push({ id: listname, items })
       return {
-        list_id: action.payload.list_id,
+        active: action.payload.listname,
         lists
       }
-
     default:
       return state
   }

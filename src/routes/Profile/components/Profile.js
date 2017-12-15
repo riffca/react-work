@@ -19,7 +19,6 @@ class Profile extends React.Component {
   render(){
     return (
         <div style={{ margin: '0 auto' }} >
-        
           <span onClick={this.props.openProfile}>Показать профиль</span>
           <h1> { this.props.profileInfo.name } </h1>
           <h1 className="text-center">Создать магазин</h1>
@@ -28,7 +27,6 @@ class Profile extends React.Component {
           <FormUniversal method={"auth-signup"}/>
           <h1 className="text-center">Вход</h1>
           <FormUniversal method={"auth-login"}/>
-
         </div>
       )
   }

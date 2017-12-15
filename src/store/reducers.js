@@ -2,9 +2,11 @@ import { combineReducers } from 'redux'
 import locationReducer from './location'
 import authReducer from './local/auth'
 import productReducer from './local/product'
+import dialogReducer from './local/dialog'
 
 export const makeRootReducer = (asyncReducers) => {
   return combineReducers({
+  	dialog: dialogReducer,
   	auth: authReducer,
     location: locationReducer,
     product: productReducer,
