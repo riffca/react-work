@@ -134,8 +134,9 @@ export class FormUniversal extends React.Component {
 
   	if(this.props.formFields.noPayload){
 	  	let object = this.state.requestObject
+	  	delete object["noPayload"]
 	  	object[key] = value
-	  	this.setState( { requestObject: { ...this.state.requestObject, ...object } } ) 
+	  	this.setState( { requestObject: { ...object } } ) 
   	} else {
   		let requestObject = this.props.formFields
   		requestObject[key] = value
