@@ -2,26 +2,26 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { loadProductList } from 'store/local/product'
 import PropTypes from 'prop-types'
-import Product from './Product'
+import ShopCard from './ShopCard'
 
 function mapStateToProps(state) {
   return {
-  	productList: state.product.lists.find(item=>{ 
-      return item.id == state.product.active
-    }) || {products: []}
+  	productList: state.shop.lists.find(item=>{ 
+      return item.id == state.shop.active
+    }) || {shops: []}
   };
 }
 
 const mapDispatchToProps = {
-  loadProductList
+  loadshopList
 }
 
-export class ListProducts extends React.Component {
+export class ListShops extends React.Component {
   static propTypes = {
     listname: PropTypes.string,
     user: PropTypes.number,
     shop: PropTypes.number,
-    productList: PropTypes.object,
+    shopList: PropTypes.object,
     clickAction: PropTypes.func,
   };
 
@@ -30,19 +30,17 @@ export class ListProducts extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-
     if(this.props.listname != nextProps.listname) {
-      this._load(nextProps.listname)
+      this._load()
     }
   }
 
-  _load(nextListname){
-    this.props.loadProductList( { 
-      auth: this.props.listname == "auth",
-      listname: nextListname || this.props.listname, 
+  _load(){
+    this.props.loadShopList( { 
+      auth: this.props.auth,
+      listname: this.props.listname || "auth", 
       user: this.props.user, 
-      shop: this.props.shop,
-      loadedProducts: this.props.loadedProducts
+      shop: this.props.shop
     })
   }
 
@@ -50,12 +48,12 @@ export class ListProducts extends React.Component {
     this._load()
   }
   render() {
-    let list  = this.props.productList
-    let products = []
-    if (list && list.products.length) {
-      products = list.products.map((product,index)=>{
-          return <div key={index} onClick={()=>this.props.clickAction(product.id)}>
-            <Product miniView={true} product={product} key={index} />
+    let list  = this.props.shopList
+    let shops = []
+    if (list && list.shops.length) {
+      shops = list.shops.map((shop,index)=>{
+          return <div key={index} onClick={()=>this.props.clickAction(shop.id)}>
+            <ShopCard shop={product}/>
           </div>
       }) 
     }
@@ -73,5 +71,5 @@ export default connect(
   mapStateToProps,
   mapDispatchToProps
 // Implement map dispatch to props
-)(ListProducts)
+)(ListShops)
 

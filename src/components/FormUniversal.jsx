@@ -208,10 +208,11 @@ export class FormUniversal extends React.Component {
             			</div>
 
             			: 
-
+            			
             			noRender ? null : <input type={definition.types[key]} ref={key} onChange={ this._onChange.bind(this, key) } value={ this.state.requestObject[key] }/> }
 
             		{ Array.isArray(this.state.requestObject[key]) && this.state.openItems ? 
+
             			<ChooseItems 
             				choiceRequest={{action: "product-get",payload:{auth:true}}}
             				alreadyItems={this.state.requestObject[key]}

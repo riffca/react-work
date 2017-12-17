@@ -2,18 +2,19 @@ import React from 'react';
 import { connect } from 'react-redux';
 import ListProducts from 'components/ListProducts';
 import FormUniversal from 'components/FormUniversal';
+import Search from 'components/Search'
 import PropTypes from 'prop-types'
-import { loadProduct } from 'store/local/product'
+import { loadProductList } from 'store/local/product'
 import chan from "utils/chan"
 
 function mapStateToProps(state) {
   return {
-  	product: state.product.opened
+  	//product: state.product.opened
   };
 }
 
 const mapDispatchToProps = {
-
+  loadProductList
 }
 
 export class ProductsManage extends React.Component {
@@ -26,7 +27,8 @@ export class ProductsManage extends React.Component {
     this.state = {
     	edit: false,
       formPayload: {},
-      createMode: false
+      createMode: false,
+      listname: "auth"
     }
   }
 
@@ -40,7 +42,20 @@ export class ProductsManage extends React.Component {
   	})
   }
 
-  setCreateMode(){
+  searchDoneAction(response) {
+    this.setState({
+      listname: "search-results",
+    })
+
+    this.props.loadProductList({
+      listname: "search-results",
+      products: response,
+    })
+
+
+  }
+
+  _setCreateMode(){
     this.setState({createMode:true, edit:true})
   }
 
@@ -50,14 +65,21 @@ export class ProductsManage extends React.Component {
   }
 
   render() {
+    let searchFields = {
+      title: {
+        type:"text",
+        placeholder: "название"
+      }
+    }
+    
     return (
       <div className="app_flex_menu_style">
-      	<div className="product_list_column">
-      		<ListProducts auth={true} clickAction={this.selectProduct.bind(this)} />
+        <div className="product_list_column">
+          <Search method={"product-get"} searchFields={searchFields} doneAction={this.searchDoneAction.bind(this)} />
+      		<ListProducts listname={this.state.listname} clickAction={this.selectProduct.bind(this)} />
       	</div>
-
         <div className="_right_info">
-          { this.state.createMode ? null : <h2 style={{cursor:"pointer"}} onClick={this.setCreateMode.bind(this)}>Создать</h2> }
+          { this.state.createMode ? null : <h2 style={{cursor:"pointer"}} onClick={this._setCreateMode.bind(this)}>Создать</h2> }
          	{ this.state.edit ? <div className="product_list_column">
         		<FormUniversal method={"product-change"} formFields={this.state.createMode ? { noPayload: true } : this.state.formPayload } />
         	</div> :<h1>Продукт не выбран</h1> }
@@ -69,5 +91,5 @@ export class ProductsManage extends React.Component {
 
 export default connect(
   mapStateToProps,
-// Implement map dispatch to props
+  mapDispatchToProps
 )(ProductsManage)

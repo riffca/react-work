@@ -2,25 +2,29 @@ export const PRODUCT_SET_LIST = 'PRODUCT_SET_LIST'
 export const PRODUCT_SET_ITEM = 'PRODUCT_SET_ITEM'
 import chan from "utils/chan"
 
-// ------------------------------------
-// Actions
-// ------------------------------------
-export const loadProductList =  ( options ) => {
-
-  return (dispatch) => {
-
-    chan.req("product-get", options ).then(products=>{
-      dispatch({
-        type    : PRODUCT_SET_LIST,
-        payload : { listname: options.listname, products }
-      })
-      
-    })
-
-    
+export const setList = (products, options) => {
+  return {
+    type    : PRODUCT_SET_LIST,
+    payload : { listname: options.listname, products }
   }
 }
 
+// ------------------------------------
+// Actions
+// ------------------------------------
+
+export const loadProductList =  ( options ) => {
+
+  return (dispatch, getState) => {
+    if(options.products) {
+      dispatch(setList(options.products, options))
+    } else {
+      chan.req("product-get", options ).then(products=>{
+        dispatch(setList(products, options))
+      })
+    }
+  }
+}
 
 
 export const loadProduct = id => {
@@ -56,9 +60,11 @@ let  productReducer  = (state = initialState, action) => {
     case PRODUCT_SET_LIST:
       let { listname, products } = action.payload
       let lists = state.lists.slice()
-      lists.push({ id: listname, products })
+      if(!(!!state.lists.find(i=>i.id==listname))) {
+        lists.push({ id: listname, products })
+      } 
       return {
-        active: action.payload.listname,
+        active: listname,
         lists
       }
     break;
