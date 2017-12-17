@@ -1,0 +1,25 @@
+
+
+.app_product {
+	
+	width: 10rem;
+	height: 10rem;	
+	cursor: pointer;
+	border: 1px solid $standart_color;
+	margin: $standart_margin;
+	._product_title {
+		
+	}
+
+
+}
+
+
+
+.app_product_list {
+	height: 70vh;
+	overflow: scroll;
+	display: flex;
+	flex-wrap: wrap;
+
+}

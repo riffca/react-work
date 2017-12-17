@@ -4,7 +4,8 @@ let typesObject = {
 		"name"
 	],
 	"items":[
-		"products"
+		"products",
+		"images"
 	]
 }
 
@@ -19,6 +20,14 @@ const types = ()=>{
 }
 
 const actions = {
+	product: {
+		change: {
+			title: "",
+			description: "",
+			images: []
+		}
+	},
+
 	shop: {
 		change: {
 			name: "",

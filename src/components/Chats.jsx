@@ -1,6 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import Dilaog from 'src/components/Dialog'
+import Dialog from 'components/Dialog'
+import PropTypes from 'prop-types'
+import store from 'store'
 
 import { loadChats } from "store/local/dialog"
 function mapStateToProps(state) {
@@ -9,9 +11,14 @@ function mapStateToProps(state) {
   };
 }
 
+const mapDispatchToProps = {
+  loadChats
+}
+
 export class Chats extends React.Component {
   static propTypes = {
-    name: React.PropTypes.string,
+    //chatList: PropTypes.array,
+    loadChats: PropTypes.func,
   };
 
   constructor(props) {
@@ -28,26 +35,30 @@ export class Chats extends React.Component {
   render() {
 
     let chats = this.props.chatlist.map((chat,index)=>{
-      <div>
-        <div>chat.secondary_id</div>
-        <button onClick={this.setDialog(index)}>Открыть</button>
-      </div>
+      return (
+          <div key={ index }>
+            <div>{ chat.secondary_id }</div>
+            <button onClick={this.setDialog.bind(this,chat.id)}>Открыть</button>
+          </div>
+        ) 
     })
 
     return (
       <div className="app_chats">
-        <div className="chat_list">{chats}</div>
-        <Dialog id={this.state.dialog} />
+        <div className="app_flex_menu_style">
+          <div className="chat_list">{chats}</div>
+          <Dialog id={this.state.dialog} />
+        </div>
       </div>
     )
   }
 
-  componentDidMount(){
-    loadChats({})
+  componentWillMount(){
+    this.props.loadChats({})
   }
 }
 
 export default connect(
   mapStateToProps,
-// Implement map dispatch to props
+  mapDispatchToProps
 )(Chats)

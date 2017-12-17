@@ -1,7 +1,8 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { loadListOfUsers } from 'store/local/users-list'
+import { loadListOfUsers } from 'local/users-list'
 
+import chan from "utils/chan"
 function mapStateToProps(state) {
   return {
   	users: state.listOfUsers

@@ -1,0 +1,17 @@
+.app_chats {
+    
+    height: 100%;
+
+}
+
+
+.app_dialog {
+	position: relative;
+	._send_bar {
+		width: 80%;
+		position: absolute;
+		left: 50%;
+		transform: translateX(-50%);
+		bottom:0;
+	}
+}

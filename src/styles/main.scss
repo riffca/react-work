@@ -1,5 +1,9 @@
+@import './variables';
 @import 'base';
 @import '~bootstrap/scss/bootstrap.scss';
+@import 'dialogs';
+@import 'products';
+@import 'form';
 
 // Some best-practice CSS that's useful for most apps
 // Just remove them if they're not what you want
@@ -20,11 +24,36 @@ body {
   box-sizing: inherit;
 }
 
-.app_chats {
-  
+::-webkit-scrollbar {
+    width: 0px;  /* remove scrollbar space */
+    background: transparent;  /* optional: just make scrollbar invisible */
+}
+/* optional: show position indicator in red */
+::-webkit-scrollbar-thumb {
+    background: #FF0000;
+}
 
 
+.app_flex_menu_style {
+  display: flex;
+  >div:first-child {
+    flex: 2;
+  }
+  >div:last-child {
+    flex: 3;
+  }
 
+  ._right_info {
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+
+    h1 {
+      margin: $standart_margin;
+    }
+
+  }
 }
 
 
@@ -32,71 +61,5 @@ body {
   display: inline-block;
   margin: .1rem .2rem;
   padding: 1rem .8rem;
-}
-
-.app_form_universal {
-
-  ._form_wrapper {
-	max-width: 320px;
-	margin: 0 auto;
-  }
-
-  ._input_wrap {}
-
-  input {
-
-    background-color: rgb(240, 240, 240);
-    border: 0px;
-    box-shadow: none;
-    position: relative;
-    -webkit-font-smoothing: antialiased;
-    border-radius: 3px;
-    //font-weight: bold;
-    padding: 10px;
-    box-sizing: border-box;
-    width: 100%;
-    color: rgb(51, 51, 51);
-    font-size: 1.4rem;
-    outline: none;
-
-    &._disabled {
-		text-align: center;
-		cursor: pointer;
-    }
-  }
-
-  label {
-    display: block;
-    margin-bottom: 4px;
-    text-align: left;
-    font-size: 1.2rem;
-    color: #646464;
-  }
-
-
-  button {
-	border: none;
-    display: inline-block;
-    border-radius: 4px;
-    -webkit-font-smoothing: antialiased;
-    padding: 10px 18px;
-    font-size: 1.4rem;
-    font-weight: bold;
-    outline: none;
-    box-shadow: none;
-    cursor: pointer;
-    margin-top: 10px;
-    vertical-align: middle;
-    text-align: center;
-    background-color: rgb(189, 8, 28);
-    color: rgb(255, 255, 255);
-    width: 100%;
-  }
-
-  .form_item_choice {
-  	cursor: pointer;
-	display: inline-block;
-	margin: .5rem;
-  }
 }
 

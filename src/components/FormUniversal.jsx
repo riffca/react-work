@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux';
-import definition from 'definition'
-import chan from "chan"
+import definition from 'utils/definition'
+
+import chan from "utils/chan"
 
 function mapStateToProps(state) {
   return {
@@ -15,6 +16,7 @@ class ChooseItems extends React.Component {
 
 	static propTypes = {
 	    alreadyItems: PropTypes.array,
+	    setPayload: PropTypes.func
 	};
 
 	static defaultProps = {
@@ -22,11 +24,14 @@ class ChooseItems extends React.Component {
 	}
 
 	constructor(){
+
 		super()
+
 		this.state = {
 			choiceItems: [],
 			currentItems: []
 		}
+
 	}
 
 	componentWillMount(){
@@ -40,8 +45,8 @@ class ChooseItems extends React.Component {
 	}
 
 	componentDidUpdate(v,s){
-		//console.log(v)
-		//console.log(s)
+		console.log(v)
+		console.log(s)
 	}
 
 	select(index, e){
@@ -107,38 +112,71 @@ class ChooseItems extends React.Component {
 
 export class FormUniversal extends React.Component {
 
+	static propTypes = {
+		formFields: PropTypes.object,
+	};
+
+	static defaultProps = {
+		formFields: {noPayload: true}
+	};
+
   constructor(props) {
     super(props);
     this.state = { 
     	requestObject: {},
-    	openItems: false
+    	openItems: false,
+    	updateMode: false,
     }
+
   }
 
-  _setRequestObject(key, value){
-  	let object = this.state.requestObject
-  	object[key] = !this.props.payload ? value : this.props.payload[key]
-  	this.setState( { requestObject: { ...this.state.requestObject, ...object } } ) 
+  _updateRequestObjectField(key, value){
+
+  	if(this.props.formFields.noPayload){
+	  	let object = this.state.requestObject
+	  	object[key] = value
+	  	this.setState( { requestObject: { ...this.state.requestObject, ...object } } ) 
+  	} else {
+  		let requestObject = this.props.formFields
+  		requestObject[key] = value
+  		this.setState({requestObject})
+  	}
   }
 
 
   _onChange(key){
-  	this._setRequestObject(key, this.refs[key].value)
+  	this._updateRequestObjectField(key, this.refs[key].value)
   }
 
-  componentWillMount() {
+  componentWillReceiveProps(nextProps) {
+  	if(!nextProps.noPayload) {
+  		for ( let key in nextProps.formFields) {
+  			this._updateRequestObjectField(key, nextProps.formFields[key])
+  		}
+  	}
 
-  	if( this.props.method) {
+  	if (nextProps.formFields.noPayload) {
+  		this._setDefinedRequestObject()
+  	}
+  }
+
+  _setDefinedRequestObject(){
+	if( this.props.method) {
   		let chunks = this.props.method.split("-")
   		let current = definition.actions[chunks[0]][chunks[1]]
   		for ( let key in current) {
-	  		this._setRequestObject(key, current[key])
+	  		this._updateRequestObjectField(key, current[key])
 	  	}
   	}
+  }
 
-  	if (this.props.payload) {
-	  	for ( let key in this.props.payload) {
-	  		this._setRequestObject(key)
+  componentWillMount() {
+  	let fields = this.props.formFields
+  	if (fields.noPayload) {
+  		this._setDefinedRequestObject()
+  	} else {
+	  	for ( let key in fields) {
+	  		this._updateRequestObjectField(key, fields[key])
 	  	}
   	}
 
@@ -152,24 +190,25 @@ export class FormUniversal extends React.Component {
   }
 
   _renderPayload(){
-
-  	let { payload } = this.props
   	return Object.keys(this.state.requestObject).map((key, index) => {
-  		let isItems = definition.types[key]=="items"
+  		let ChooseItems = definition.types[key]=="items"
+  		let noRender = ['intuser','intshop','id'].indexOf(key)!=-1
         return (
             <div key={index}>
 
             	<div>
 
-            		<label>{key}</label>
+            		{ noRender ? null : <label>{key}</label> }
 
-            		{ isItems ? 
+            		{ ChooseItems ? 
+
             			<div onClick={()=>{this.setState({openItems:!this.state.openItems})}}>
             				<input type={definition.types[key]} disabled placeholder="choose items" className="_disabled" ref={key} onChange={ this._onChange.bind(this, key) } />
             			</div>
-            			:
-            			<input type={definition.types[key]} ref={key} onChange={ this._onChange.bind(this, key) } value={ this.state.requestObject[key] }/>
-            		}
+
+            			: 
+
+            			noRender ? null : <input type={definition.types[key]} ref={key} onChange={ this._onChange.bind(this, key) } value={ this.state.requestObject[key] }/> }
 
             		{ Array.isArray(this.state.requestObject[key]) && this.state.openItems ? 
             			<ChooseItems 
@@ -177,8 +216,7 @@ export class FormUniversal extends React.Component {
             				alreadyItems={this.state.requestObject[key]}
             				setFunc={this.setItemsPayloadChunk.bind(this,key)}
             				/> 
-            			: null 
-            		}
+            			: null }
 
             	</div>
 
@@ -190,7 +228,6 @@ export class FormUniversal extends React.Component {
   }
 
   makeReq() {
-
   	chan
 	  	.req(this.props.method, this.state.requestObject)
 	  	.then(data=>{
@@ -198,7 +235,6 @@ export class FormUniversal extends React.Component {
 				localStorage.setItem("token", data.token)
 			}
 	  	})
-
   }
 
   render() {

@@ -1,3 +1,4 @@
+import chan from "utils/chan"
 
 
 export const LIST_USER_SET = "LIST_USER_SET"

@@ -1,5 +1,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
+import PropTypes from 'prop-types'
 
 function mapStateToProps(state) {
   return {
@@ -9,7 +10,7 @@ function mapStateToProps(state) {
 
 export class DialogMessage extends React.Component {
   static propTypes = {
-    message: React.PropTypes.object,
+    message: PropTypes.object,
   };
 
   constructor(props) {

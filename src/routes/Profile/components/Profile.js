@@ -19,14 +19,11 @@ class Profile extends React.Component {
   render(){
     return (
         <div style={{ margin: '0 auto' }} >
-          <span onClick={this.props.openProfile}>Показать профиль</span>
+          <div>          
+            <div className="app_standart_button">Новый магазин</div>
+            <div className="app_standart_button">Cоздать товар</div>
+          </div>
           <h1> { this.props.profileInfo.name } </h1>
-          <h1 className="text-center">Создать магазин</h1>
-          <FormUniversal method={"shop-change"}/>
-          <h1 className="text-center">Регистрация</h1>
-          <FormUniversal method={"auth-signup"}/>
-          <h1 className="text-center">Вход</h1>
-          <FormUniversal method={"auth-login"}/>
         </div>
       )
   }

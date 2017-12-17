@@ -1,4 +1,4 @@
-import chan from "chan"
+import chan from "utils/chan"
 
 // ------------------------------------
 // Constants

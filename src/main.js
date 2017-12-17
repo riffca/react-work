@@ -5,9 +5,6 @@ import './styles/main.scss'
 
 import store from "./store"
 
-import chan from "chan"
-//chan.req("app-init")
-chan.req("app-init", {"stas": "stas"})
 
 // Render Setup
 // ------------------------------------

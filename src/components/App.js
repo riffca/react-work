@@ -17,9 +17,8 @@ class App extends React.Component {
   }
 
   componentDidMount(){
-    this.props.store.dispatch(receiveAccount())
-    this.props.store.dispatch(loadProductList())
-
+    //this.props.store.dispatch(receiveAccount())
+    //this.props.store.dispatch(loadProductList())
   }
 
   render () {

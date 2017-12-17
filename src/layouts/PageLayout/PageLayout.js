@@ -33,7 +33,9 @@ export class PageLayout extends React.Component {
         <nav className="nav">
           <IndexLink to='/counter' className="nav-link active">Рассписание</IndexLink>
           <Link to='/' className="nav-link">Преподаватели</Link>
-          <Link to='/profile' className="nav-link">Profile</Link>
+          <Link to='/profile' className="nav-link">Профиль</Link>
+          <Link to='/chats' className="nav-link">Диалоги</Link>
+          <Link to='/manage/products' className="nav-link">Товары</Link>
         </nav>
 
         <div className='page-layout__viewport'>
