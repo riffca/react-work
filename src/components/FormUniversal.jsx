@@ -1,7 +1,8 @@
 import React from 'react';
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux';
-import definition from 'utils/definition'
+import definition from 'utils/definition';
+import Icon from 'components/Icon';
 
 import chan from "utils/chan"
 
@@ -16,11 +17,11 @@ class ChooseItems extends React.Component {
 
 	static propTypes = {
 	    alreadyItems: PropTypes.array,
-	    setPayload: PropTypes.func
+	    setPayload: PropTypes.func,
 	};
 
 	static defaultProps = {
-	   	alreadyItems: []
+	   	alreadyItems: [],
 	}
 
 	constructor(){
@@ -76,13 +77,14 @@ class ChooseItems extends React.Component {
 	}
 
 	render(){
-
+    let { isProducts, isTags } = this.props
 		let current = this.state.currentItems
 			.map((i, index)=>{
+        console.log(i.name)
 			return (
-				<div key={i.index} onClick={this.removeSelect.bind(this, index, event)} className="form_item_choice">		    
-					<h3>{i.id}</h3>
-				    <p>{i.title}</p>
+				<div key={index} onClick={this.removeSelect.bind(this, index, event)} style={{background:"lightgreen"}} className="form_item_choice _product">
+          { isProducts ? <div><image src=""/><p>{i.title}</p></div> : null }
+          { isTags ? <p>{i.name}</p> : null }
 				</div>
 			)
 
@@ -91,9 +93,9 @@ class ChooseItems extends React.Component {
 		let choice = this.state.choiceItems
 			.map((i, index)=>{ 
 			return (
-				<div key={i.index} onClick={this.select.bind(this, index, event)} className="form_item_choice">
-				    <h3>{i.id}</h3>
-				    <p>{i.title}</p>	
+				<div key={index} onClick={this.select.bind(this, index, event)} className="form_item_choice _product">
+          { isProducts ? <div><image src=""/><p>{i.title}</p></div> : null }
+          { isTags ? <p>{i.name}</p> : null }
 				</div>
 			)
 		})
@@ -101,9 +103,9 @@ class ChooseItems extends React.Component {
 
 		return  (<div>
 					<div>
-						{current}
-						<div style={{ height: 10, background: "black"}} />
-						{choice}
+						{ current }
+						{ current.length && choice.length ? <div style={{ height: 3, background: "black"}} /> : null }
+						{ choice }
 				   </div> 
 			   </div>)
 	}
@@ -126,6 +128,7 @@ export class FormUniversal extends React.Component {
     	requestObject: {},
     	openItems: false,
     	updateMode: false,
+    	imageFiles: [],
     }
 
   }
@@ -147,6 +150,34 @@ export class FormUniversal extends React.Component {
 
   _onChange(key){
   	this._updateRequestObjectField(key, this.refs[key].value)
+  }
+
+  _onChangeFiles(key) {
+  	let files = this.refs[key].files
+  	Object.keys(files).forEach((k,index)=>{
+  		let file = new FileReader()
+  		let image = new Image()
+      let requestModelID = this.state.requestObject.id
+  		file.onload = ()=>{
+  			let { name, type, size } = files[index]
+        if (size > 1200000) {
+          alert(`большой размер файла ${name}`)
+          return
+        } 
+  			let imageObject = { 
+          name, 
+          mime: type, 
+          shop:requestModelID, 
+          product: requestModelID, 
+          size, 
+          data: file.result 
+        } 
+  			let imageFiles = [...this.state.imageFiles, imageObject]
+  			this.setState({imageFiles})
+  			image.src=file.result
+  		}
+  		file.readAsDataURL(files[index])
+  	})
   }
 
   componentWillReceiveProps(nextProps) {
@@ -190,10 +221,28 @@ export class FormUniversal extends React.Component {
   	})
   }
 
+  _removeImage(index){
+  	let imageFiles = this.state.imageFiles.slice()
+  	imageFiles.splice(index,1)
+  	this.setState({imageFiles})
+  }
+
   _renderPayload(){
   	return Object.keys(this.state.requestObject).map((key, index) => {
-  		let ChooseItems = definition.types[key]=="items"
+
+  		let isChooseItems = definition.types[key]=="items"
+  		let isImagesUpload = key == "images"
   		let noRender = ['intuser','intshop','id'].indexOf(key)!=-1
+      let isChooseProducts = key == "products"
+      let isChooseTags = key == "tags"
+
+  		let imagesToUpload = this.state.imageFiles.map((image, index)=>{
+  			return <div key={index} onClick={this._removeImage.bind(this, index)} className="app_image_card">
+	  				<div><img src={image.data} /></div>
+	  				<div><Icon name={"tick_black"} /></div> 
+  				</div>
+  		})
+
         return (
             <div key={index}>
 
@@ -201,24 +250,47 @@ export class FormUniversal extends React.Component {
 
             		{ noRender ? null : <label>{key}</label> }
 
-            		{ ChooseItems ? 
+            		{ isChooseItems ? 
 
-            			<div onClick={()=>{this.setState({openItems:!this.state.openItems})}}>
-            				<input type={definition.types[key]} disabled placeholder="choose items" className="_disabled" ref={key} onChange={ this._onChange.bind(this, key) } />
-            			</div>
+            			isImagesUpload ? 
+
+            				<div className="_images_to_upload">
+		            			<div onClick={(()=>{this.setState({openItems:!this.state.openItems})}).bind(this)}>
+		            				<label htmlFor={"images"}> Выберите картинки</label>
+		            				<input id="images" type={"file"}  ref={key} multiple style={{display:"none"}} onChange={ this._onChangeFiles.bind(this, key) } />
+		            			</div>
+		            			<div className="form_upload_images">
+		            				{imagesToUpload}
+		            			</div>
+		            		</div>
+
+	            			:
+
+	            			<div onClick={()=>{this.setState({openItems:!this.state.openItems})}}>
+	            				<input type={definition.types[key]} disabled placeholder={"Выберите "+key}className="_disabled" ref={key} onChange={ this._onChange.bind(this, key) } />
+	            			</div>
 
             			: 
             			
             			noRender ? null : <input type={definition.types[key]} ref={key} onChange={ this._onChange.bind(this, key) } value={ this.state.requestObject[key] }/> }
 
-            		{ Array.isArray(this.state.requestObject[key]) && this.state.openItems ? 
+            		{ isChooseProducts && Array.isArray(this.state.requestObject[key]) && this.state.openItems ? 
+              			<ChooseItems
+                      isProducts={true}
+                      choiceRequest={{action: "product-get", payload:{auth:true}}}
+                      alreadyItems={this.state.requestObject[key]}
+                      setFunc={this.setItemsPayloadChunk.bind(this,key)}
+                      /> 
+                  : null }
 
-            			<ChooseItems 
-            				choiceRequest={{action: "product-get",payload:{auth:true}}}
-            				alreadyItems={this.state.requestObject[key]}
-            				setFunc={this.setItemsPayloadChunk.bind(this,key)}
-            				/> 
-            			: null }
+                { isChooseTags && Array.isArray(this.state.requestObject[key]) && this.state.openItems ? 
+                    <ChooseItems
+                      isTags={true}
+                      choiceRequest={{action: "tag-get", payload:{}}}
+                      alreadyItems={this.state.requestObject[key]}
+                      setFunc={this.setItemsPayloadChunk.bind(this,key)}
+                      /> 
+                  : null }
 
             	</div>
 
@@ -228,24 +300,52 @@ export class FormUniversal extends React.Component {
     }) 
 
   }
+  _request(){
+    return chan
+      .req(this.props.method, this.state.requestObject)
+      .then(data=>{
+        if ( ~this.props.method.indexOf("auth")) {
+          localStorage.setItem("token", data.token)
+        }
+      })
+  }
 
   makeReq() {
-  	chan
-	  	.req(this.props.method, this.state.requestObject)
-	  	.then(data=>{
-			if ( ~this.props.method.indexOf("auth")) {
-				localStorage.setItem("token", data.token)
-			}
-	  	})
+    let { imageFiles } = this.state
+    if(imageFiles.length) {
+      let promises = []
+      let images = []
+      imageFiles.forEach(i=>{
+        promises.push(new Promise((resolve, reject)=>{
+          chan.req("upload-image",i, true).then(data=>{
+            images.push(data)
+            console.log(images)
+            resolve(data)
+          }).catch(err=>reject(err))
+        }))
+      })
+      Promise.all([...promises]).then(data=>{
+        alert(1)
+        // console.log(data)
+        // let { requestObject } = this.state
+        // requestObject["images"] = images
+        // this.setState({requestObject})
+        // this._request()       
+      })
+
+    } else {
+      this._request()
+    }
+
   }
 
   render() {
     return (
       	<div className="app_form_universal">
-			<div className="_form_wrapper">      		
+			    <div className="_form_wrapper">      		
 		      	{ this._renderPayload() }
 		      	<button onClick={this.makeReq.bind(this)}>Send</button>
-		    </div>
+		      </div>
       	</div>
     );
   }

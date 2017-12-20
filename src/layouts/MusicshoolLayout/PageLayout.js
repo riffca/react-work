@@ -23,18 +23,19 @@ export class PageLayout extends React.Component {
     return (
       <div className='container text-center'>
 
+        <h2>Музыкальная школа</h2>
+
         <div className="app_user_info">
           <span className="app_link_button_spaces">{authUser.username}</span>
           <span className="app_link_button_spaces">{authUser.balance}</span>
-          <Link to='/signup' className="app_link_button_spaces">Регистрация</Link>
-          <Link to='/login' className="app_link_button_spaces">Вход</Link>
         </div>
 
         <nav className="nav">
-          <IndexLink to='/counter' className="nav-link active">IndexLink</IndexLink>
+          <IndexLink to='/counter' className="nav-link active">Рассписание</IndexLink>
+          <Link to='/' className="nav-link">Преподаватели</Link>
+          <Link to='/profile' className="nav-link">Профиль</Link>
           <Link to='/chats' className="nav-link">Диалоги</Link>
           <Link to='/manage/products' className="nav-link">Товары</Link>
-          <Link to='/manage/shops' className="nav-link">Магазины</Link>
         </nav>
 
         <div className='page-layout__viewport'>

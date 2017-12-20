@@ -1,19 +1,19 @@
 import React from 'react';
 import { connect } from 'react-redux';
-import { loadProductList } from 'store/local/product'
 import PropTypes from 'prop-types'
-import ShopCard from './ShopCard'
+import ShopCard from 'components/ShopCard'
+import { loadShopList } from 'store/local/shop'
 
 function mapStateToProps(state) {
   return {
-  	productList: state.shop.lists.find(item=>{ 
+  	shopList: state.shop.lists.find(item=>{ 
       return item.id == state.shop.active
     }) || {shops: []}
   };
 }
 
 const mapDispatchToProps = {
-  loadshopList
+  loadShopList
 }
 
 export class ListShops extends React.Component {
@@ -39,8 +39,7 @@ export class ListShops extends React.Component {
     this.props.loadShopList( { 
       auth: this.props.auth,
       listname: this.props.listname || "auth", 
-      user: this.props.user, 
-      shop: this.props.shop
+      user: this.props.user
     })
   }
 
@@ -53,14 +52,14 @@ export class ListShops extends React.Component {
     if (list && list.shops.length) {
       shops = list.shops.map((shop,index)=>{
           return <div key={index} onClick={()=>this.props.clickAction(shop.id)}>
-            <ShopCard shop={product}/>
+            <ShopCard shop={shop}/>
           </div>
       }) 
     }
 
     return (
-      <div className="app_product_list">
-        {products.length ? products : null}
+      <div className="app_shop_list">
+        {shops.length ? shops : null}
       </div>
     );
 
@@ -70,6 +69,5 @@ export class ListShops extends React.Component {
 export default connect(
   mapStateToProps,
   mapDispatchToProps
-// Implement map dispatch to props
 )(ListShops)
 

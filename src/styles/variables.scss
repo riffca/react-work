@@ -6,3 +6,24 @@ $standart_font_size: 1rem;
 $medium_font_size: 1.2rem;
 
 $large_font_size: 1.6rem;
+
+
+@mixin standartSquareView {
+	height: 10rem;
+	width: 10rem;
+	cursor: pointer;
+	border: 1px solid $standart_color;
+}
+
+@mixin miniSquareView {
+	height: 5rem;
+	width: 5rem;
+	cursor: pointer;
+	border: 1px solid $standart_color;
+}
+
+@mixin inlineChilds {
+	&> div {
+     display: inline-block;
+   }
+}

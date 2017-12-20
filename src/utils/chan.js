@@ -100,7 +100,7 @@ class Chan {
     }
     if(once.hasOwnProperty(action)){
       if(once[action] != null){
-        once[action](data)
+        once[action](data)        
         once[action]=null
       }
     }

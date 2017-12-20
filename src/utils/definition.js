@@ -1,11 +1,13 @@
 let typesObject = {
 	"text":[
 		"advt",
-		"name"
+		"name",
+		"decription",
 	],
 	"items":[
 		"products",
-		"images"
+		"images",
+		"tags"
 	]
 }
 
@@ -24,7 +26,8 @@ const actions = {
 		change: {
 			title: "",
 			description: "",
-			images: []
+			images: [],
+			tags: [],
 		}
 	},
 
@@ -32,7 +35,8 @@ const actions = {
 		change: {
 			name: "",
 			advt: "",
-			products: []
+			products: [],
+			images: [],
 		}
 	},
 
@@ -46,7 +50,26 @@ const actions = {
 			email: "",
 			password: ""
 		}
+	},
+	tag: {
+		create: {
+			name: ""
+		},
+		get: {
+			name: "",
+			tag: 0
+		}
+	},
+
+	delete: {
+		what: {
+			shop: 0,
+			user: 0,
+			product: 0,
+			tag: 0
+		}
 	}
+
 }
 
 export default {

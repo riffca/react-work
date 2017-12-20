@@ -1,17 +1,15 @@
 
 
 .app_product {
-	
-	width: 10rem;
-	height: 10rem;	
-	cursor: pointer;
-	border: 1px solid $standart_color;
+	@include standartSquareView;
 	margin: $standart_margin;
 	._product_title {
 		
 	}
+}
 
-
+.form_item_choice._product {
+	@include miniSquareView;
 }
 
 

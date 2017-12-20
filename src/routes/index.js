@@ -6,6 +6,7 @@ import ProfileRoute from './Profile'
 import Chats from 'components/Chats'
 import Auth from 'components/Auth'
 import ManageProducts from 'components/ManageProducts'
+import ManageShops from 'components/ManageShops'
 
 
 /*  Note: Instead of using JSX, we recommend using react-router
@@ -29,6 +30,10 @@ export const createRoutes = (store) => ({
     {
       path: '/login',
       component: Auth
+    },
+    {
+      path: '/manage/shops',
+      component: ManageShops
     },
     {
       path: '/manage/products',

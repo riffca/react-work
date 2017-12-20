@@ -146,6 +146,8 @@ config.module.rules.push({
   },
 })
 
+config.module.rules.push({ test: /.*\.svg$/, loaders: ["svg-inline-loader"] })
+
 // Fonts
 // ------------------------------------
 ;[
@@ -154,7 +156,7 @@ config.module.rules.push({
   ['otf', 'font/opentype'],
   ['ttf', 'application/octet-stream'],
   ['eot', 'application/vnd.ms-fontobject'],
-  ['svg', 'image/svg+xml'],
+  //['svg', 'image/svg+xml'],
 ].forEach((font) => {
   const extension = font[0]
   const mimetype = font[1]

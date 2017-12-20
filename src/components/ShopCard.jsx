@@ -19,8 +19,9 @@ export class ShopCard extends React.Component {
   render() {
   	let { shop } = this.props
     return (
-      <div className="app_shop_mini_view">
+      <div className="app_shop_card">
       	<h3>{shop.name}</h3>
+        <div>{shop.advt}</div>
       </div>
     );
   }

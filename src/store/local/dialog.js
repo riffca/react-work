@@ -9,28 +9,25 @@ export const DIALOG_ADD_MESSAGE = 'DIALOG_ADD_MESSAGE'
 
 
 export const loadChats = (options)=>{
-		return (dispatch, getState) => {
-			chan.req("dialog-fetch",options)
-				.then(chats=>{
-					let { dialog: { chats: chatList }} = getState()
-					if (chatList.length) {
-						if(chatList[0].id != chats[0].id) {
-							dispatch({
-								 type: SET_CHATS,
-								 payload: chats
-							})
-						}	
-					} else {
-
+	return (dispatch, getState) => {
+		chan.req("dialog-fetch",options)
+			.then(chats=>{
+				let { dialog: { chats: chatList }} = getState()
+				if (chatList.length) {
+					if(chatList[0].id != chats[0].id) {
 						dispatch({
-							type: SET_CHATS,
-							payload: chats
+							 type: SET_CHATS,
+							 payload: chats
 						})
-
-					}
-				})
-		}
-
+					}	
+				} else {
+					dispatch({
+						type: SET_CHATS,
+						payload: chats
+					})
+				}
+			})
+	}
 }
 
 

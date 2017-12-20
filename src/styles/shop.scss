@@ -1,0 +1,12 @@
+.app_shop_card {
+	
+	width: 10rem;
+	height: 12rem;	
+	cursor: pointer;
+	border: 1px solid $standart_color;
+	margin: $standart_margin;
+
+	._bottom_info {
+		text-align: center;
+	}
+}

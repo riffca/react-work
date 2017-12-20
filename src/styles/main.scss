@@ -4,6 +4,7 @@
 @import 'dialogs';
 @import 'products';
 @import 'form';
+@import 'shop';
 
 // Some best-practice CSS that's useful for most apps
 // Just remove them if they're not what you want
@@ -63,3 +64,38 @@ body {
   padding: 1rem .8rem;
 }
 
+
+
+
+
+.app_image_card {
+  width: 10rem;
+  height: 10rem;
+  overflow-y: hidden;
+  cursor: pointer;
+
+  img {
+    width: 100%;
+  }
+  
+  @include inlineChilds;
+
+
+
+}
+
+.form_upload_images {
+
+  width: 20rem;
+
+}
+
+.app_icon {
+  width: 3rem;
+  height: 3rem;
+
+  svg {
+    width: 100%;
+    height: auto;
+  }
+}

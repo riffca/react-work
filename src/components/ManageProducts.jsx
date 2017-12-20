@@ -25,9 +25,9 @@ export class ProductsManage extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-    	edit: false,
+    	edit: true,
       formPayload: {},
-      createMode: false,
+      createMode: true,
       listname: "auth"
     }
   }
@@ -51,8 +51,7 @@ export class ProductsManage extends React.Component {
       listname: "search-results",
       products: response,
     })
-
-
+    
   }
 
   _setCreateMode(){
