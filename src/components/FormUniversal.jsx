@@ -3,6 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux';
 import definition from 'utils/definition';
 import Icon from 'components/Icon';
+import jquery from 'jquery'
 
 import chan from "utils/chan"
 
@@ -46,8 +47,8 @@ class ChooseItems extends React.Component {
 	}
 
 	componentDidUpdate(v,s){
-		console.log(v)
-		console.log(s)
+		//console.log(v)
+		//console.log(s)
 	}
 
 	select(index, e){
@@ -77,14 +78,14 @@ class ChooseItems extends React.Component {
 	}
 
 	render(){
-    let { isProducts, isTags } = this.props
+    let { isProducts, isTags, isPicture } = this.props
 		let current = this.state.currentItems
 			.map((i, index)=>{
-        console.log(i.name)
 			return (
 				<div key={index} onClick={this.removeSelect.bind(this, index, event)} style={{background:"lightgreen"}} className="form_item_choice _product">
           { isProducts ? <div><image src=""/><p>{i.title}</p></div> : null }
           { isTags ? <p>{i.name}</p> : null }
+          { isPicture ? <img style={{ width: "100%"}} src={i.thumb} /> : null }
 				</div>
 			)
 
@@ -92,10 +93,11 @@ class ChooseItems extends React.Component {
 
 		let choice = this.state.choiceItems
 			.map((i, index)=>{ 
-			return (
+			return ( 
 				<div key={index} onClick={this.select.bind(this, index, event)} className="form_item_choice _product">
           { isProducts ? <div><image src=""/><p>{i.title}</p></div> : null }
           { isTags ? <p>{i.name}</p> : null }
+          { isPicture ? <img style={{ width: "100%"}} src={i.thumb} /> : null }
 				</div>
 			)
 		})
@@ -154,7 +156,8 @@ export class FormUniversal extends React.Component {
 
   _onChangeFiles(key) {
   	let files = this.refs[key].files
-  	Object.keys(files).forEach((k,index)=>{
+    let keys = Object.keys(files)
+  	keys.forEach((k,index)=>{
   		let file = new FileReader()
   		let image = new Image()
       let requestModelID = this.state.requestObject.id
@@ -175,6 +178,9 @@ export class FormUniversal extends React.Component {
   			let imageFiles = [...this.state.imageFiles, imageObject]
   			this.setState({imageFiles})
   			image.src=file.result
+        if(index+1>= keys.length) {
+          this.setState({openItems: true})
+        }
   		}
   		file.readAsDataURL(files[index])
   	})
@@ -235,7 +241,8 @@ export class FormUniversal extends React.Component {
   		let noRender = ['intuser','intshop','id'].indexOf(key)!=-1
       let isChooseProducts = key == "products"
       let isChooseTags = key == "tags"
-
+      let isChoosePicturies = key == "images"
+      let { requestObject } = this.state
   		let imagesToUpload = this.state.imageFiles.map((image, index)=>{
   			return <div key={index} onClick={this._removeImage.bind(this, index)} className="app_image_card">
 	  				<div><img src={image.data} /></div>
@@ -256,7 +263,7 @@ export class FormUniversal extends React.Component {
 
             				<div className="_images_to_upload">
 		            			<div onClick={(()=>{this.setState({openItems:!this.state.openItems})}).bind(this)}>
-		            				<label htmlFor={"images"}> Выберите картинки</label>
+                        <label htmlFor={"images"}> Выберите картинки</label>
 		            				<input id="images" type={"file"}  ref={key} multiple style={{display:"none"}} onChange={ this._onChangeFiles.bind(this, key) } />
 		            			</div>
 		            			<div className="form_upload_images">
@@ -274,19 +281,28 @@ export class FormUniversal extends React.Component {
             			
             			noRender ? null : <input type={definition.types[key]} ref={key} onChange={ this._onChange.bind(this, key) } value={ this.state.requestObject[key] }/> }
 
-            		{ isChooseProducts && Array.isArray(this.state.requestObject[key]) && this.state.openItems ? 
+            		{ isChooseProducts && Array.isArray(requestObject[key]) && this.state.openItems ? 
               			<ChooseItems
                       isProducts={true}
                       choiceRequest={{action: "product-get", payload:{auth:true}}}
-                      alreadyItems={this.state.requestObject[key]}
+                      alreadyItems={requestObject[key]}
                       setFunc={this.setItemsPayloadChunk.bind(this,key)}
                       /> 
                   : null }
 
-                { isChooseTags && Array.isArray(this.state.requestObject[key]) && this.state.openItems ? 
+                { isChooseTags && Array.isArray(requestObject[key]) && this.state.openItems ? 
                     <ChooseItems
                       isTags={true}
                       choiceRequest={{action: "tag-get", payload:{}}}
+                      alreadyItems={requestObject[key]}
+                      setFunc={this.setItemsPayloadChunk.bind(this,key)}
+                      /> 
+                  : null }
+
+                { isChoosePicturies && Array.isArray(requestObject[key]) && this.state.openItems ? 
+                    <ChooseItems
+                      isPicture={true}
+                      choiceRequest={{action: "image-get", payload:{intproduct: requestObject[key]}}}
                       alreadyItems={this.state.requestObject[key]}
                       setFunc={this.setItemsPayloadChunk.bind(this,key)}
                       /> 
@@ -310,33 +326,26 @@ export class FormUniversal extends React.Component {
       })
   }
 
+  _reqWithUploads(){
+    let promises = []
+    let images = []
+    this.state.imageFiles.forEach(i=>{
+      promises.push(new Promise((resolve, reject)=>{
+        chan.req("upload-image",i, true).then(data=>{
+          images.push(data)
+          resolve(data)
+        }).catch(err=>reject(err))
+      }))
+    })
+    Promise.all([...promises]).then(data=>{
+      let { requestObject } = this.state
+      requestObject["images"] = [...requestObject["images"], ...data]
+      this.setState({requestObject})     
+    }).then(()=>this._request())
+  }
+
   makeReq() {
-    let { imageFiles } = this.state
-    if(imageFiles.length) {
-      let promises = []
-      let images = []
-      imageFiles.forEach(i=>{
-        promises.push(new Promise((resolve, reject)=>{
-          chan.req("upload-image",i, true).then(data=>{
-            images.push(data)
-            console.log(images)
-            resolve(data)
-          }).catch(err=>reject(err))
-        }))
-      })
-      Promise.all([...promises]).then(data=>{
-        alert(1)
-        // console.log(data)
-        // let { requestObject } = this.state
-        // requestObject["images"] = images
-        // this.setState({requestObject})
-        // this._request()       
-      })
-
-    } else {
-      this._request()
-    }
-
+    this.state.imageFiles.length ? this._reqWithUploads() : this._request()
   }
 
   render() {

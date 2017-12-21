@@ -1,6 +1,6 @@
 import SockJS from "sockjs-client/dist/sockjs.min"
 // import store from "root/store"
-
+import uuid from 'uuid/v1'
 let token = localStorage.getItem("token") || "default" 
 let host = "http://localhost:8092"
 
@@ -38,13 +38,15 @@ class Chan {
 
     this.action = action
     this.payload = data
+    let actionIdentificator = uuid()
 
-    if(cb)this.on(action, cb, true)
+    if(cb)this.on(actionIdentificator, cb, true)
 
     let schema = {
       action: this.action,
       payload: this.payload,
-      token: this.token
+      token: this.token,
+      uuid: actionIdentificator
     }
 
     this.sock.send(JSON.stringify(schema))
@@ -94,14 +96,14 @@ class Chan {
 
     let listen = this.listenBox
     let once = this.onceBox
-    let action = data.action
-    if(listen.hasOwnProperty(action)){
-      listen[action](data)
+    let actionIdentificator = data.uuid
+    if(listen.hasOwnProperty(actionIdentificator)){
+      listen[actionIdentificator](data)
     }
-    if(once.hasOwnProperty(action)){
-      if(once[action] != null){
-        once[action](data)        
-        once[action]=null
+    if(once.hasOwnProperty(actionIdentificator)){
+      if(once[actionIdentificator] != null){
+        once[actionIdentificator](data)        
+        once[actionIdentificator]=null
       }
     }
   }

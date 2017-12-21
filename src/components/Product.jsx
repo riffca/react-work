@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import PropTypes from 'prop-types';
+import ImageCustom from 'components/ImageCustom'
 
 function mapStateToProps(state) {
   return {
@@ -29,11 +30,16 @@ export class Product extends React.Component {
   }
 
   render() {
+
   	let {product}  = this.props
+
+    let pictureID = product.images.length ? product.images[0].intgoogle : ""
+
   	if ( this.props.miniView) {
 	    return (
             <div className="app_product">
                 <div className="_product_image">
+                  <ImageCustom googleID={pictureID} />
                 </div>
                 <div className="_product_title">
                   <h3>{product.title}</h3>
